@@ -38,10 +38,10 @@ public class UserMealsUtil {
 
     public static List<UserMealWithExceed> getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
 
-        final Map<LocalDate, Integer> caloriesForAllDay = new HashMap<>();
-        mealList.forEach(meal -> caloriesForAllDay.merge(getLocalDate(meal), meal.getCalories(), Integer::sum));
+        final Map<LocalDate, Integer> caloriesForAllDay =
+                mealList.stream().collect(Collectors.toMap(UserMealsUtil::getLocalDate, UserMeal::getCalories, Integer::sum));
 
-        Map<LocalDate, Boolean> exceedForAllDay = caloriesForAllDay.entrySet().stream()
+        final Map<LocalDate, Boolean> exceedForAllDay = caloriesForAllDay.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, p -> p.getValue() > caloriesPerDay));
 
         return mealList.stream()
