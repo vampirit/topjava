@@ -55,14 +55,7 @@ public class UserMealsUtil {
     }
 
     private static boolean isTimeBetween(UserMeal meal, LocalTime startTime, LocalTime endTime) {
-        return isTimeBetween(meal.getDateTime().toLocalTime(), startTime, endTime);
+        return TimeUtil.isBetween(meal.getDateTime().toLocalTime(), startTime, endTime);
     }
 
-    private static boolean isTimeBetween(LocalTime localTime, LocalTime startTime, LocalTime endTime) {
-        if (localTime.equals(startTime) || localTime.equals(endTime)){
-            return true;
-        }else {
-            return localTime.isAfter(startTime) && localTime.isBefore(endTime);
-        }
-    }
 }
