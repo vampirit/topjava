@@ -38,4 +38,26 @@ public class UserMealWithExceed {
                 ", exceed=" + exceed +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserMealWithExceed that = (UserMealWithExceed) o;
+
+        if (calories != that.calories) return false;
+        if (exceed != that.exceed) return false;
+        if (dateTime != null ? !dateTime.equals(that.dateTime) : that.dateTime != null) return false;
+        return description != null ? description.equals(that.description) : that.description == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dateTime != null ? dateTime.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + calories;
+        result = 31 * result + (exceed ? 1 : 0);
+        return result;
+    }
 }
