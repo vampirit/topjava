@@ -31,7 +31,8 @@ public class MockDBMap {
         );
 
         for (int i = 0; i < meals.size(); i++) {
-            dataBase.put(lastId++, meals.get(i));
+            meals.get(i).setId(lastId++);
+            dataBase.put(meals.get(i).getId(), meals.get(i));
         }
     }
 
