@@ -1,37 +1,42 @@
 package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.MockDBMap;
 
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class MealDaoMap implements MealDao {
-    Map<Integer, Meal> data = new HashMap<>();
+    private final MockDBMap dataBase;
 
     public MealDaoMap() {
-        initData();
+        dataBase = new MockDBMap();
     }
 
 
     @Override
+    public void create(Meal meal) {
+        dataBase.create(meal);
+    }
+
+    @Override
+    public Meal getById(int id) {
+        return dataBase.get(id);
+    }
+
+    @Override
     public List<Meal> getAll() {
-        return new ArrayList<>(data.values());
+        return dataBase.getAll();
     }
 
-    private void initData() {
-        List<Meal> meals = Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-        );
-
-        for (int i = 0; i < meals.size(); i++) {
-            data.put(i, meals.get(i));
-        }
+    @Override
+    public void update(Meal meal) {
+        dataBase.update(meal);
     }
+
+    @Override
+    public void delete(int id) {
+        dataBase.delete(id);
+    }
+
+
 }
