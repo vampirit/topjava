@@ -10,8 +10,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MealDaoMap implements MealDao {
-    private final ConcurrentHashMap<Integer, Meal> dataBase = new ConcurrentHashMap<>();
-    private int lastId = 1;
+    private static final ConcurrentHashMap<Integer, Meal> dataBase = new ConcurrentHashMap<>();
+    private static int lastId = 1;
     private final Lock lock = new ReentrantLock();
 
     public MealDaoMap() {
