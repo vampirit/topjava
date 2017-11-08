@@ -10,8 +10,8 @@
 
 
 <form action="meals" method="post" name="addEditMeal">
-    <c:set value="${param.get('meal')}" var="meal"/>
-    
+    <c:set value="${requestScope.get('meal')}" var="meal"/>
+
     <c:if test="${meal.id ne 0}">
         <div>
             <label>Id</label>

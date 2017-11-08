@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MealDaoMap implements MealDao {
     private static final ConcurrentHashMap<Integer, Meal> dataBase = new ConcurrentHashMap<>();
     private static int lastId = 1;
-    private final Lock lock = new ReentrantLock();
+    private static final Lock lock = new ReentrantLock();
 
     public MealDaoMap() {
         initData();
@@ -39,6 +39,7 @@ public class MealDaoMap implements MealDao {
         lock.lock();
         int currentId = lastId++;
         lock.unlock();
+        meal.setId(currentId);
         dataBase.put(currentId, meal);
     }
 

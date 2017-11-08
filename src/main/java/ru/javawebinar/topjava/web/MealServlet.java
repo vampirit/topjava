@@ -21,33 +21,26 @@ public class MealServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(MealServlet.class);
     private static final MealDao mealDao = new MealDaoMap();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOG.debug("mealServlet GET");
-        if (request.getParameter("action") != null){
-            String action = request.getParameter("action");
-            if (action.equals("addMeal")){
-                LOG.debug("redirect to addEditMeal.jsp");
-                request.getRequestDispatcher("/addEditMeal.jsp").forward(request, response);
-            }
+        String action = req.getParameter("action");
+        if (action!= null) {
+            workWithAction(req, resp, action);
+        }else {
+            List<Meal> allMeal = mealDao.getAll();
+            List<MealWithExceed> mealExceeded = MealsUtil.getMealExceeded(allMeal, 2000);
 
-            else if (action.equals("delete")){
-                LOG.debug("request delete " + request.getParameter("id"));
-            }else if (action.equals("edit")){
-                LOG.debug("request edit " + request.getParameter("id"));
-            }
+            req.setAttribute("meals", mealExceeded);
+            req.getRequestDispatcher("/meal.jsp").forward(req, resp);
         }
 
-        List<Meal> allMeal = mealDao.getAll();
-        List<MealWithExceed> mealExceeded = MealsUtil.getMealExceeded(allMeal, 2000);
-
-
-        request.setAttribute("meals", mealExceeded);
-        request.getRequestDispatcher("/meal.jsp").forward(request, response);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOG.debug("mealServlet POST");
+        req.setCharacterEncoding("UTF-8");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("dateTime"), formatter);
@@ -59,9 +52,42 @@ public class MealServlet extends HttpServlet {
         Meal meal = new Meal(dateTime, description, calories);
         if (id != null && !id.isEmpty()){
             meal.setId(Integer.parseInt(id));
+            mealDao.update(meal);
+        }else {
+            mealDao.create(meal);
         }
 
         LOG.debug(meal.toString());
         resp.sendRedirect("meals");
     }
+
+    private void workWithAction(HttpServletRequest req, HttpServletResponse resp, String action) throws ServletException, IOException {
+        if (action.equals("addMeal")) {
+            addMeal(req, resp);
+        } else if (action.equals("edit")) {
+            editMeal(req, resp);
+        }else if(action.equals("delete")){
+            deleteMeal(req, resp);
+        }
+    }
+
+    private void deleteMeal(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        LOG.debug("request delete " + id);
+        mealDao.delete(id);
+        resp.sendRedirect("meals");
+    }
+
+    private void editMeal(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        LOG.debug("request edit " + id);
+        req.setAttribute("meal", mealDao.getById(id));
+        req.getRequestDispatcher("/addEditMeal.jsp").forward(req, resp);
+    }
+
+    private void addMeal(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        LOG.debug("redirect to addEditMeal.jsp");
+        req.getRequestDispatcher("/addEditMeal.jsp").forward(req, resp);
+    }
+
 }
