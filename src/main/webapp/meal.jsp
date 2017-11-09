@@ -30,7 +30,7 @@
         </tr>
     </thead>
     <tbody>
-        <c:forEach items="${requestScope.get('meals')}" var="meal">
+        <c:forEach items="${meals}" var="meal">
             <c:if test="${meal.exceed eq true}">
                 <c:set value="#ff9999" var="color"/>
             </c:if>

@@ -10,20 +10,18 @@
 
 
 <form action="meals" method="post" name="addEditMeal">
-    <c:set value="${requestScope.get('meal')}" var="meal"/>
 
     <c:if test="${meal.id ne 0}">
         <div>
             <label>Id</label>
-            <input type="text" value="${meal.id}" readonly="readonly" name="id"/>
+            <input type="number" value="${meal.id}" readonly="readonly" name="id"/>
             </br>
         </div>
     </c:if>
     
     <div>
         <label>Date and time</label>
-        <javatime:format value="${meal.dateTime}" pattern="dd.MM.yyyy HH:mm" var="parsedDate"/>
-        <input type="text" name="dateTime" value="${parsedDate}"/>
+        <input type="datetime-local" name="dateTime" value="${meal.dateTime}"/>
         </br>
     </div>
 
@@ -35,12 +33,15 @@
 
     <div>
         <label>Calories:</label>
-        <input type="text" name="calories" value="${meal.calories}">
+        <input type="number" name="calories" value="${meal.calories}">
         </br>
     </div>
 
     <input type="submit" value="Submit"/>
+    <input type="reset" value="Reset"/>
 </form>
+
+<a href="meals"> Назад </a>
 
 </body>
 </html>

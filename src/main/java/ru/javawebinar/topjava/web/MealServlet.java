@@ -42,8 +42,7 @@ public class MealServlet extends HttpServlet {
         LOG.debug("mealServlet POST");
         req.setCharacterEncoding("UTF-8");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("dateTime"), formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("dateTime"));
         String id = req.getParameter("id");
         String description = req.getParameter("description");
         int calories = Integer.parseInt(req.getParameter("calories"));
