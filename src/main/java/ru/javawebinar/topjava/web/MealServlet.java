@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -17,8 +18,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
@@ -46,21 +50,61 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.valueOf(request.getParameter("calories")), AuthorizedUser.id());
+        String action = request.getParameter("action");
+        if (action!= null && action.equals("filter")){
+            log.info("filter");
+            LocalDate startDay, endDay;
+            LocalTime startTime, endTime;
 
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        if (meal.isNew()) {
-            log.info("Create {}", meal);
-            controller.add(meal);
-        } else {
-            log.info("Update {}", meal);
-            controller.update(meal);
+            String startDayParam = request.getParameter("startDay");
+            if (!startDayParam.equals("")) {
+                startDay = LocalDate.parse(startDayParam);
+            }else{
+                startDay = LocalDate.MIN;
+            }
+
+            String endDayParam = request.getParameter("endDay");
+            if (!startDayParam.equals("")) {
+                endDay = LocalDate.parse(endDayParam);
+            }else{
+                endDay = LocalDate.MAX;
+            }
+
+            String startTimeParam = request.getParameter("startTime");
+            if (!startTimeParam.equals("")) {
+                startTime = LocalTime.parse(startTimeParam);
+            }else{
+                startTime = LocalTime.MIN;
+            }
+
+            String endTimeParam = request.getParameter("endTime");
+            if (!endTimeParam.equals("")) {
+                endTime = LocalTime.parse(endTimeParam);
+            }else{
+                endTime = LocalTime.MAX;
+            }
+
+            List<MealWithExceed> betweenDateTime = controller.getBetweenDateTime(startDay, endDay, startTime, endTime, AuthorizedUser.id(), AuthorizedUser.getCaloriesPerDay());
+            request.setAttribute("meals", betweenDateTime);
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
+
+        }else {
+            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                    LocalDateTime.parse(request.getParameter("dateTime")),
+                    request.getParameter("description"),
+                    Integer.valueOf(request.getParameter("calories")), AuthorizedUser.id());
+
+            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+            if (meal.isNew()) {
+                log.info("Create {}", meal);
+                controller.add(meal);
+            } else {
+                log.info("Update {}", meal);
+                controller.update(meal);
+            }
+
+            response.sendRedirect("meals");
         }
-
-        response.sendRedirect("meals");
     }
 
     @Override
@@ -96,4 +140,5 @@ public class MealServlet extends HttpServlet {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.valueOf(paramId);
     }
+
 }

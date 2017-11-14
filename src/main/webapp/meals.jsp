@@ -19,6 +19,36 @@
 <body>
 <section>
     <h3><a href="index.html">Home</a></h3>
+    <h2>Filter</h2>
+
+    <form method="post" action="meals">
+        <input type="hidden" name="action" value="filter">
+        <span>
+            <div>
+                <label> Start day </label>
+                <input type="date" name="startDay"/>
+            </div>
+            <div>
+                <label> End day </label>
+                <input type="date" name="endDay"/>
+            </div>
+        </span>
+        <br>
+        <span>
+            <div>
+                <label> Start time </label>
+                <input type="time" name="startTime"/>
+            </div>
+            <div>
+                <label> End time </label>
+                <input type="time" name="endTime"/>
+            </div>
+        </span>
+        <br>
+
+        <input type="submit" value="Filter"/>
+    </form>
+
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <hr/>

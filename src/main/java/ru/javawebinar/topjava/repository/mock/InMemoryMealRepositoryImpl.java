@@ -21,6 +21,10 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     {
         MealsUtil.MEALS.forEach(this::save);
+        save(new Meal(null, LocalDateTime.now(), "zavtrak", 754, 2));
+        save(new Meal(null, LocalDateTime.now(), "obed", 400, 2));
+        save(new Meal(null, LocalDateTime.now(), "yzin", 200, 2));
+        save(new Meal(null, LocalDateTime.now(), "serials", 1300, 2));
     }
 
     @Override
