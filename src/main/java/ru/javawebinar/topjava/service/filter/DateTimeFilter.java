@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.model.filter;
+package ru.javawebinar.topjava.service.filter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
