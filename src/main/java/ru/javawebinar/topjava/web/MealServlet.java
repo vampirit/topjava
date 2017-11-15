@@ -93,8 +93,8 @@ public class MealServlet extends HttpServlet {
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
-                log.info("Delete {}", id);
-                controller.delete(AuthorizedUser.id(), id);
+                boolean delete = controller.delete(AuthorizedUser.id(), id);
+                log.info("Delete {}, sucsess {}", id, delete);
                 response.sendRedirect("meals");
                 break;
             case "create":
