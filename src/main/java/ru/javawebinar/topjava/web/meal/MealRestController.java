@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.filter.DateTimeFilter;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -21,9 +22,9 @@ public class MealRestController {
         return MealsUtil.getWithExceeded(service.getAll(userId), caloriesPerDay);
     }
 
-    public List<MealWithExceed> getBetweenDateTime(LocalDate startDay, LocalDate endDay, LocalTime startTime, LocalTime endTime, int userId, int caloriesPerDay){
-        List<Meal> betweenDateTime = service.getBetweenDate(startDay, endDay, userId);
-        return MealsUtil.getFilteredWithExceeded(betweenDateTime, startTime, endTime, caloriesPerDay);
+    public List<MealWithExceed> getBetweenDateTime(DateTimeFilter filter, int userId, int caloriesPerDay){
+        List<Meal> betweenDateTime = service.getBetweenDate(filter.getStartDay(), filter.getEndDay(), userId);
+        return MealsUtil.getFilteredWithExceeded(betweenDateTime, filter.getStartTime(), filter.getEndTime(), caloriesPerDay);
     }
 
     public Meal get(int mealId, int userId){

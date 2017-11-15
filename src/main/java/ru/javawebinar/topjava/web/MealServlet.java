@@ -6,6 +6,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.filter.DateTimeFilter;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.mock.InMemoryMealRepositoryImpl;
 import ru.javawebinar.topjava.to.MealWithExceed;
@@ -24,6 +25,8 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
+
+import static ru.javawebinar.topjava.model.filter.DateTimeFilter.*;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
@@ -53,38 +56,14 @@ public class MealServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (action!= null && action.equals("filter")){
             log.info("filter");
-            LocalDate startDay, endDay;
-            LocalTime startTime, endTime;
+            DateTimeFilter filter = new DateTimeFilterBuilder()
+                    .setStartDay(request.getParameter("startDay"))
+                    .setEndDay(request.getParameter("endDay"))
+                    .setStartTime(request.getParameter("startTime"))
+                    .setEndTime(request.getParameter("endTime"))
+                    .build();
 
-            String startDayParam = request.getParameter("startDay");
-            if (!startDayParam.equals("")) {
-                startDay = LocalDate.parse(startDayParam);
-            }else{
-                startDay = LocalDate.MIN;
-            }
-
-            String endDayParam = request.getParameter("endDay");
-            if (!startDayParam.equals("")) {
-                endDay = LocalDate.parse(endDayParam);
-            }else{
-                endDay = LocalDate.MAX;
-            }
-
-            String startTimeParam = request.getParameter("startTime");
-            if (!startTimeParam.equals("")) {
-                startTime = LocalTime.parse(startTimeParam);
-            }else{
-                startTime = LocalTime.MIN;
-            }
-
-            String endTimeParam = request.getParameter("endTime");
-            if (!endTimeParam.equals("")) {
-                endTime = LocalTime.parse(endTimeParam);
-            }else{
-                endTime = LocalTime.MAX;
-            }
-
-            List<MealWithExceed> betweenDateTime = controller.getBetweenDateTime(startDay, endDay, startTime, endTime, AuthorizedUser.id(), AuthorizedUser.getCaloriesPerDay());
+            List<MealWithExceed> betweenDateTime = controller.getBetweenDateTime(filter, AuthorizedUser.id(), AuthorizedUser.getCaloriesPerDay());
             request.setAttribute("meals", betweenDateTime);
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
 
