@@ -107,12 +107,11 @@ public class MealsUtil {
 
         return values.stream().flatMap(identity()).collect(toList());
     }
-<<<<<<< HEAD
-*/
-=======
 
     public static MealWithExceed createWithExceed(Meal meal, boolean exceeded) {
         return new MealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), exceeded);
     }
->>>>>>> parent of 4649ecc... 2 0 add fix
+*/
+
+
 }
