@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -57,6 +58,15 @@ public class JdbcMealRepositoryTest {
         assertThat(meal).isEqualTo(save);
     }
 
+    @Test(expected = DuplicateKeyException.class)
+    public void saveDuplicate()throws Exception{
+        Meal mealToSave = new Meal(LocalDateTime.of(2015, 5, 15, 9, 5),
+                "тест дубликата", 777);
+        Meal save = repository.save(mealToSave, userId);
+        System.out.println(save);
+
+    }
+
     @Test
     public void deleteOwnMeal() throws Exception {
         boolean delete = repository.delete(expectedMealUser.getId(), userId);
@@ -101,8 +111,8 @@ public class JdbcMealRepositoryTest {
 
     private void getAllMatches(int userId, List<Meal> allData) {
         List<Meal> all = repository.getAll(userId);
+        assertThat(all.size()).isEqualTo(allData.size());
         assertThat(all).containsAll(allData);
-        assertThat(allData).containsAll(all);
     }
 
     @Test
