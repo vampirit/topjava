@@ -49,7 +49,7 @@ public class JdbcMealRepositoryImpl implements MealRepository {
             meal.setId(number.intValue());
         }else {
             int update = namedTemplate.update("UPDATE meals SET date_time=:dateTime, description=:description, " +
-                    "calories=:calories", map);
+                    "calories=:calories WHERE id=:id AND user_id=:userId", map);
             if (update == 0)
                 return null;
         }
