@@ -30,23 +30,12 @@ public class JdbcMealRepositoryTest {
 
     @Autowired
     MealRepository repository;
-    static Meal saveMeal;
-    static Meal expectedMealUser;
-    static Meal expectedMealAdmin;
+    Meal saveMeal = new Meal(MealTestData.SAVE_MEAL);
+    Meal expectedMealUser = new Meal(MealTestData.EXPECTED_MEAL_USER);
+    Meal expectedMealAdmin = new Meal(MealTestData.EXPECTED_MEAL_ADMIN);
 
-    int userId = 100000;
-    int adminId = 100001;
-
-    @BeforeClass
-    public static void initMeals(){
-        saveMeal = new Meal(LocalDateTime.of(2014, 11, 25, 14, 22),
-                            "Хавчик хавчик текстим хавчик", 10001);
-        expectedMealUser = new Meal(100005, LocalDateTime.of(2015, 5, 15, 22, 0),
-                            "Вася сериальчик", 1531);
-        expectedMealAdmin = new Meal(100011, LocalDateTime.of(2015, 5, 15, 22, 7),
-                            "У админа пустой ходильник", 0);
-
-    }
+    int userId = MealTestData.USER_ID;
+    int adminId = MealTestData.ADMIN_ID;
 
     @Test
     public void save() throws Exception {

@@ -14,8 +14,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MealTestData {
-    private static final int USER_ID = UserTestData.USER_ID;
-    private static final int ADMIN_ID = UserTestData.ADMIN_ID;
+    public static final int USER_ID = UserTestData.USER_ID;
+    public static final int ADMIN_ID = UserTestData.ADMIN_ID;
+
+    public static final Meal SAVE_MEAL = new Meal(LocalDateTime.of(2014, 11, 25, 14, 22),
+                            "Хавчик хавчик текстим хавчик", 10001);
+    public static final Meal EXPECTED_MEAL_USER = new Meal(100005, LocalDateTime.of(2015, 5, 15, 22, 0),
+                            "Вася сериальчик", 1531);
+    public static final Meal EXPECTED_MEAL_ADMIN = new Meal(100011, LocalDateTime.of(2015, 5, 15, 22, 7),
+                            "У админа пустой ходильник", 0);
 
     private static List<Meal> allUserMeals = Arrays.asList(
             new Meal(100002, LocalDateTime.of(2015, 5,15, 9,5), "Вася завтрак", 300),
