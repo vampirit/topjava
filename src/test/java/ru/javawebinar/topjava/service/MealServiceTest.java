@@ -1,6 +1,11 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +18,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -30,6 +37,30 @@ public class MealServiceTest {
         SLF4JBridgeHandler.install();
     }
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    private static Map<String, Long> testTimer = new HashMap<>();
+    @Rule
+    public Stopwatch timer = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            testTimer.put(description.getTestClass().getSimpleName()+"."+description.getMethodName(), nanos/1000000);
+        }
+    };
+
+    @AfterClass
+    public static void printResultTimer(){
+        System.out.println("==========================================================");
+        System.out.println("=                   TEST TIMER RESULT                    =");
+        System.out.println("==========================================================");
+        for (Map.Entry<String, Long> test : testTimer.entrySet()) {
+            System.out.printf("Method: %s, time: %d ms\n",
+                                test.getKey(), test.getValue());
+        }
+        System.out.println("==========================================================");
+    }
+
     @Autowired
     private MealService service;
 
@@ -39,8 +70,9 @@ public class MealServiceTest {
         assertMatch(service.getAll(USER_ID), MEAL6, MEAL5, MEAL4, MEAL3, MEAL2);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testDeleteNotFound() throws Exception {
+        exception.expect(NotFoundException.class);
         service.delete(MEAL1_ID, 1);
     }
 
@@ -57,8 +89,9 @@ public class MealServiceTest {
         assertMatch(actual, ADMIN_MEAL1);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testGetNotFound() throws Exception {
+        exception.expect(NotFoundException.class);
         service.get(MEAL1_ID, ADMIN_ID);
     }
 
@@ -69,8 +102,9 @@ public class MealServiceTest {
         assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testUpdateNotFound() throws Exception {
+        exception.expect(NotFoundException.class);
         service.update(MEAL1, ADMIN_ID);
     }
 
