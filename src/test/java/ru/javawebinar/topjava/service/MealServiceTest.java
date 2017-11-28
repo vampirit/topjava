@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import ru.javawebinar.topjava.TimerTest;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -31,7 +32,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class MealServiceTest {
+public class MealServiceTest extends TimerTest {
 
     static {
         SLF4JBridgeHandler.install();
@@ -40,26 +41,7 @@ public class MealServiceTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    private static Map<String, Long> testTimer = new HashMap<>();
-    @Rule
-    public Stopwatch timer = new Stopwatch() {
-        @Override
-        protected void finished(long nanos, Description description) {
-            testTimer.put(description.getTestClass().getSimpleName()+"."+description.getMethodName(), nanos/1000000);
-        }
-    };
 
-    @AfterClass
-    public static void printResultTimer(){
-        System.out.println("==========================================================");
-        System.out.println("=                   TEST TIMER RESULT                    =");
-        System.out.println("==========================================================");
-        for (Map.Entry<String, Long> test : testTimer.entrySet()) {
-            System.out.printf("Method: %s, time: %d ms\n",
-                                test.getKey(), test.getValue());
-        }
-        System.out.println("==========================================================");
-    }
 
     @Autowired
     private MealService service;
