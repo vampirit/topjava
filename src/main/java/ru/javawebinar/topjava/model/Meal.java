@@ -14,7 +14,7 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.GET_ALL, query = "SELECT meal FROM Meal meal JOIN meal.user user WHERE user.id=:userId order by meal.dateTime desc"),
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal meal where meal in(" +
                 "select meal From Meal meal JOIN meal.user user where meal.id=:mealId AND user.id=:userId)"),
-        @NamedQuery(name = Meal.GET, query = "SELECT meal from Meal meal Join meal.user user WHERE meal.id=:mealId AND user.id=:userId"),
+        @NamedQuery(name = Meal.GET, query = "SELECT meal from Meal meal WHERE meal.id=:mealId"),
         @NamedQuery(name = Meal.GET_BETWEEN, query = "SELECT meal FROM Meal meal JOIN meal.user user " +
                 "WHERE user.id=:userId AND meal.dateTime>=:startDay AND meal.dateTime<=:endDay order by meal.dateTime desc")
 })
