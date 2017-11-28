@@ -12,13 +12,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(readOnly = true)
 public class JpaMealRepositoryImpl implements MealRepository {
 
     @PersistenceContext
     private EntityManager manager;
 
     @Override
+    @Transactional
     public Meal save(Meal meal, int userId) {
         User user = manager.find(User.class, userId);
 
@@ -38,6 +39,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
     }
 
     @Override
+    @Transactional
     public boolean delete(int id, int userId) {
         int countDelete = manager.createNamedQuery(Meal.DELETE)
                 .setParameter("userId", userId)
@@ -50,11 +52,10 @@ public class JpaMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         List<Meal> meals = manager.createNamedQuery(Meal.GET, Meal.class)
-                .setParameter("userId", userId)
                 .setParameter("mealId", id)
                 .getResultList();
 
-        if (meals.size() == 0)
+        if (meals.size() == 0 || !meals.get(0).getUser().getId().equals(userId))
             return null;
 
         return meals.get(0);
