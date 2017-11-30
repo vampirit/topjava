@@ -9,35 +9,23 @@ import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class TimerTest {
+public class TimerTest extends Stopwatch {
     private static final Logger LOG = getLogger(TimerTest.class);
+    private Map<String, Long> testTimer = new HashMap<>();
 
-    private static String className;
-    private static Map<String, Long> testTimer = new HashMap<>();
-    @Rule
-    public Stopwatch timer = new Stopwatch() {
-        @Override
-        protected void finished(long nanos, Description description) {
-            LOG.info("{} - {} ms", description.getMethodName(), nanos/1000000);
-            testTimer.put(description.getTestClass().getSimpleName()+"."+description.getMethodName(), nanos/1000000);
-            className = description.getTestClass().getSimpleName();
-        }
-    };
+    @Override
+    protected void finished(long nanos, Description description) {
+        LOG.info("{} - {} ms", description.getMethodName(), nanos/1000000);
+        testTimer.put(description.getTestClass().getSimpleName()+"."+description.getMethodName(), nanos/1000000);
+    }
 
-    @AfterClass
-    public static void printResultTimer(){
-        System.out.println("==========================================================");
-        System.out.println("=                   TEST TIMER RESULT                    =");
-        System.out.println("=                   "+className+".class              =");
-        System.out.println("==========================================================");
-
-        for (Map.Entry<String, Long> test : testTimer.entrySet()) {
-            System.out.printf("Method: %s, time: %d ms\n",
-                    test.getKey(), test.getValue());
-        }
-        System.out.println("==========================================================");
+    public String getResult(){
+        return testTimer.entrySet().stream()
+                .map((entry) -> String.format("%s - %s ms", entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
     }
 }

@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +33,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringJUnit4ClassRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-public class MealServiceTest extends TimerTest {
+public class MealServiceTest{
 
     static {
         SLF4JBridgeHandler.install();
@@ -41,7 +42,9 @@ public class MealServiceTest extends TimerTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-
+    @ClassRule
+    @Rule
+    public static TimerTest timer = new TimerTest();
 
     @Autowired
     private MealService service;
@@ -100,5 +103,10 @@ public class MealServiceTest extends TimerTest {
         assertMatch(service.getBetweenDates(
                 LocalDate.of(2015, Month.MAY, 30),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID), MEAL3, MEAL2, MEAL1);
+    }
+
+    @AfterClass
+    public static void after() {
+        System.out.println(timer.getResult());
     }
 }

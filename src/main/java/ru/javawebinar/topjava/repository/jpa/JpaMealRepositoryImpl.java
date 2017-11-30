@@ -21,19 +21,19 @@ public class JpaMealRepositoryImpl implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User user = manager.find(User.class, userId);
+        User user = manager.getReference(User.class, userId);
 
         if (meal.isNew()){
             meal.setUser(user);
             manager.persist(meal);
             return meal;
-        }else{
+        }else {
             Meal mealFromDb = get(meal.getId(), userId);
             if (mealFromDb == null) {
                 return null;
-            }else
-                meal.setUser(mealFromDb.getUser());
+            }
         }
+        meal.setUser(user);
 
         return manager.merge(meal);
     }
@@ -51,23 +51,21 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = manager.createNamedQuery(Meal.GET, Meal.class)
-                .setParameter("mealId", id)
-                .getResultList();
+        Meal meal = manager.find(Meal.class, id);
 
-        if (meals.size() == 0 || !meals.get(0).getUser().getId().equals(userId))
+        if (meal == null || !meal.getUser().getId().equals(userId))
             return null;
 
-        return meals.get(0);
+        return meal;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        List<Meal> userId1 = manager.createNamedQuery(Meal.GET_ALL, Meal.class).setParameter("userId", userId).getResultList();
-        for (Meal o : userId1) {
+        List<Meal> allMeal = manager.createNamedQuery(Meal.GET_ALL, Meal.class).setParameter("userId", userId).getResultList();
+        for (Meal o : allMeal) {
             System.out.println(o.getUser());
         }
-        return userId1;
+        return allMeal;
     }
 
     @Override
