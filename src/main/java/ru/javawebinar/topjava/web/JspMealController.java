@@ -10,10 +10,13 @@ import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Controller
@@ -85,5 +88,29 @@ public class JspMealController {
         return "redirect:/meals";
     }
 
+    @PostMapping("/filter")
+    public String filterMeals(HttpServletRequest request, Model model){
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String startTime = request.getParameter("startTime");
+        String endTime = request.getParameter("endTime");
 
+        log.debug("startDate={} endDate={} startTime={} endTime={}", startDate, endDate, startTime, endTime);
+
+
+        List<Meal> betweenDates = mealService.getBetweenDates(
+                startDate.isEmpty() ? DateTimeUtil.MIN_DATE : LocalDate.parse(startDate),
+                endDate.isEmpty() ? DateTimeUtil.MAX_DATE : LocalDate.parse(endDate),
+                AuthorizedUser.id()
+        );
+
+        List<MealWithExceed> filteredWithExceeded = MealsUtil.getFilteredWithExceeded(betweenDates,
+                startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime),
+                endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime),
+                AuthorizedUser.getCaloriesPerDay()
+        );
+
+        model.addAttribute("meals", filteredWithExceeded);
+        return "meals";
+    }
 }

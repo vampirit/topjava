@@ -10,7 +10,7 @@
 
         <section>
             <h3>Meals</h3>
-            <form method="post" action="meals?action=filter">
+            <form method="post" action="/meals/filter">
                 <dl>
                     <dt>From Date:</dt>
                     <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
