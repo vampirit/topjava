@@ -41,7 +41,6 @@ public class JspMealController extends MealRestController {
     public String updateMeal(@PathVariable("id") int id, Model model){
         Meal meal = get(id);
         model.addAttribute("meal", meal);
-        model.addAttribute("action", "Edit meal");
         return "mealForm";
     }
 
@@ -49,7 +48,6 @@ public class JspMealController extends MealRestController {
     public String createMeal(Model model){
         log.debug("CreateMeal get request.");
         model.addAttribute("meal", new Meal());
-        model.addAttribute("action", "Create meal");
         return "mealForm";
     }
 
