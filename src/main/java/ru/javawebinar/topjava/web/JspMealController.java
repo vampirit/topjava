@@ -12,6 +12,7 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -21,29 +22,24 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/meals")
-public class JspMealController {
+public class JspMealController extends MealRestController {
     private static final Logger log = LoggerFactory.getLogger(JspMealController.class);
 
     @Autowired
-    private MealService mealService;
+    public JspMealController(MealService service) {
+        super(service);
+    }
 
     @GetMapping
     public String getAllMeals(Model model){
-        int userId = AuthorizedUser.id();
-        int caloriesPerDay = AuthorizedUser.getCaloriesPerDay();
-        log.debug("GetAllMeals get request, userId={}", userId);
-
-        List<Meal> all = mealService.getAll(userId);
-        List<MealWithExceed> withExceeded = MealsUtil.getWithExceeded(all, caloriesPerDay);
+        List<MealWithExceed> withExceeded = getAll();
         model.addAttribute("meals", withExceeded);
         return "meals";
     }
 
     @GetMapping("/update/{id}")
     public String updateMeal(@PathVariable("id") int id, Model model){
-        int userId = AuthorizedUser.id();
-        log.debug("UpdateMeal get request, userId={}, mealId={}", userId, id);
-        Meal meal = mealService.get(id, userId);
+        Meal meal = get(id);
         model.addAttribute("meal", meal);
         model.addAttribute("action", "Edit meal");
         return "mealForm";
@@ -59,32 +55,24 @@ public class JspMealController {
 
     @PostMapping("/save")
     public String saveMeal(HttpServletRequest request){
-        log.debug("SaveMeal post request.");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
-        if (!request.getParameter("id").isEmpty()) {
-            meal.setId(Integer.parseInt(request.getParameter("id")));
+        if (!request.getParameter("id").isEmpty()){
+            int idMeal = Integer.parseInt(request.getParameter("id"));
+            meal.setId(idMeal);
+            update(meal, idMeal);
+        }else {
+            create(meal);
         }
-        log.debug("Save Meal={}", meal);
-        int userId = AuthorizedUser.id();
-
-        if (meal.isNew()) {
-            mealService.create(meal, userId);
-        } else {
-            mealService.update(meal, userId);
-        }
-
         return "redirect:/meals";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteMeal(@PathVariable("id") int id){
-        int userId = AuthorizedUser.id();
-        log.debug("Delete mealId={}, userId={}", id, userId);
-        mealService.delete(id, userId);
+        delete(id);
         return "redirect:/meals";
     }
 
@@ -95,22 +83,14 @@ public class JspMealController {
         String startTime = request.getParameter("startTime");
         String endTime = request.getParameter("endTime");
 
-        log.debug("startDate={} endDate={} startTime={} endTime={}", startDate, endDate, startTime, endTime);
-
-
-        List<Meal> betweenDates = mealService.getBetweenDates(
-                startDate.isEmpty() ? DateTimeUtil.MIN_DATE : LocalDate.parse(startDate),
-                endDate.isEmpty() ? DateTimeUtil.MAX_DATE : LocalDate.parse(endDate),
-                AuthorizedUser.id()
+        List<MealWithExceed> filteredMeals = getBetween(
+                startDate.isEmpty() ? null : LocalDate.parse(startDate),
+                startTime.isEmpty() ? null : LocalTime.parse(startTime),
+                endDate.isEmpty() ? null : LocalDate.parse(endDate),
+                endTime.isEmpty() ? null : LocalTime.parse(endTime)
         );
 
-        List<MealWithExceed> filteredWithExceeded = MealsUtil.getFilteredWithExceeded(betweenDates,
-                startTime.isEmpty() ? LocalTime.MIN : LocalTime.parse(startTime),
-                endTime.isEmpty() ? LocalTime.MAX : LocalTime.parse(endTime),
-                AuthorizedUser.getCaloriesPerDay()
-        );
-
-        model.addAttribute("meals", filteredWithExceeded);
+        model.addAttribute("meals", filteredMeals);
         return "meals";
     }
 }
