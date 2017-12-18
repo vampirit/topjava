@@ -16,6 +16,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -40,7 +41,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void create() throws Exception {
-        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
+        User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), new HashSet<Role>(){{add(Role.ROLE_USER); add(Role.ROLE_ADMIN);}});
         User created = service.create(newUser);
         newUser.setId(created.getId());
         assertMatch(service.getAll(), ADMIN, newUser, USER);
@@ -84,6 +85,27 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User updated = new User(USER);
         updated.setName("UpdatedName");
         updated.setCaloriesPerDay(330);
+        service.update(updated);
+        assertMatch(service.get(USER_ID), updated);
+    }
+
+    @Test
+    public void updateWithRoleAppend() throws Exception {
+        User updated = new User(USER);
+        updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        updated.getRoles().add(Role.ROLE_ADMIN);
+        service.update(updated);
+        assertMatch(service.get(USER_ID), updated);
+    }
+
+    @Test
+    public void updateWithRoleReplace() throws Exception {
+        User updated = new User(USER);
+        updated.setName("UpdatedName");
+        updated.setCaloriesPerDay(330);
+        updated.getRoles().clear();
+        updated.getRoles().add(Role.ROLE_ADMIN);
         service.update(updated);
         assertMatch(service.get(USER_ID), updated);
     }
