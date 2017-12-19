@@ -5,7 +5,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public abstract class JdbcTramsactionManager {
+public abstract class JdbcTransactionManager {
 
     protected abstract PlatformTransactionManager getTransactionManager();
 
