@@ -93,8 +93,8 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void getBetweenDateTime() throws Exception {
-        LocalDateTime start = LocalDateTime.of(2015, Month.MAY, 30, 10, 0);
-        LocalDateTime end = LocalDateTime.of(2015, Month.MAY, 31, 13, 0);
+        LocalDateTime start = LocalDateTime.of(2015, Month.MAY, 30, 0, 0);
+        LocalDateTime end = LocalDateTime.of(2015, Month.MAY, 31, 23, 59);
 
         List<MealWithExceed> filteredWithExceeded = MealsUtil.getFilteredWithExceeded(
                 mealService.getBetweenDates(start.toLocalDate(), end.toLocalDate(), AuthorizedUser.id()),
@@ -102,8 +102,10 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
         mockMvc.perform(post(REST_URL + "/between")
                 .contentType(MediaType.TEXT_HTML_VALUE)
-                .param("start", start.toString())
-                .param("end", end.toString()))
+                .param("startDate", start.toLocalDate().toString())
+                .param("startTime", end.toLocalTime().toString())
+                .param("endDate", end.toLocalDate().toString())
+                .param("endTime", end.toLocalTime().toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(writeValue(filteredWithExceeded)));
