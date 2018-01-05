@@ -31,4 +31,24 @@ $(function () {
        ]
    });
    makeEditable();
+
+   $('#filterForm').submit(function(){
+       updateTable();
+       return false;
+   });
 });
+
+function updateTable(){
+    var filterData = $('#filterForm');
+    $.ajax({
+        type:"POST",
+        url: ajaxUrl + 'filter',
+        data: filterData.serialize(),
+        success: insertDataInTable
+    })
+}
+
+function resetFilter() {
+    $('#filterForm').find(':input').val("");
+    updateTable();
+}

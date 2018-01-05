@@ -18,7 +18,7 @@
                     <div class="panel panel-default">
                         <div class="panel-body">
 
-                            <form class = "form-horizontal" method="post" action="meals/filter">
+                            <form class = "form-horizontal" id="filterForm">
                                 <div class="form-group">
                                     <dl>
                                         <dt class="control-label col-sm-3"><spring:message code="meal.startDate"/>:</dt>
@@ -38,7 +38,12 @@
                                     </dl>
                                 </div>
                                 <div class="text-right">
-                                    <button type="submit"><spring:message code="meal.filter"/></button>
+                                    <div class="btn btn-primary" onclick="updateTable()">
+                                        <span class="glyphicon glyphicon-filter"></span>
+                                    </div>
+                                    <div class="btn btn-danger" onclick="resetFilter()">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
                                 </div>
                             </form>
                         </div>
