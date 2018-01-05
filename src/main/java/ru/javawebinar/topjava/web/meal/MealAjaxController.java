@@ -14,8 +14,8 @@ import java.util.List;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 
 @RestController
-@RequestMapping(MealAjaxContoller.AJAX_URL)
-public class MealAjaxContoller extends AbstractMealController {
+@RequestMapping(MealAjaxController.AJAX_URL)
+public class MealAjaxController extends AbstractMealController {
 
     public static final String AJAX_URL = "/ajax/meals";
 
