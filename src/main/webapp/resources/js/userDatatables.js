@@ -3,7 +3,8 @@ var datatableApi;
 
 // $(document).ready(function () {
 $(function () {
-    datatableApi = $("#datatable").DataTable({
+    var datatable = $("#datatable");
+    datatableApi = datatable.DataTable({
         "paging": false,
         "info": true,
         "columns": [
@@ -39,6 +40,21 @@ $(function () {
         ]
     });
     makeEditable();
+
+    datatable.find(':checkbox').on('click', function () {
+        var line = $(this).closest('tr');
+        var id = line.prop('id');
+        $.ajax({
+            type: 'POST',
+            url: ajaxUrl + 'enabledUser',
+            data: {'userId': id, 'enabled': $(this).prop('checked')},
+            success: function () {
+                line.toggleClass('disable');
+            }
+        });
+        console.log(id + ' ' + $(this).prop('checked'));
+
+    })
 });
 
 function updateTable(){
